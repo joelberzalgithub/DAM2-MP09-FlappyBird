@@ -1,0 +1,16 @@
+{
+  "name": "flappy-bird",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "alex chica",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.3",
+    "winston": "^3.12.0",
+    "ws": "^8.16.0"
+  }
+}
