@@ -6,13 +6,11 @@ const http = require('http');
 const app = express();
 const port = 3000;
 
-// Address settings ‘/’
 app.get('/', getHello);
 async function getHello(req, res) {
   res.send(`Hello World`);
 }
 
-// logger settings
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -48,10 +46,10 @@ const logger = winston.createLogger({
 });
 logger.info(`logger started`);
 
-// Create an HTTP server
+
 const server = http.createServer(app);
 
-// Properly shutdown the server
+
 process.on('SIGTERM', shutDown);
 process.on('SIGINT', shutDown);
 function shutDown() {
@@ -60,34 +58,51 @@ function shutDown() {
   process.exit(0);
 }
 
-// WebSocket initialization
+
 logger.info(`starting WebSocket service...`);
 const wss = new WebSocket.Server({ server });
 
-// on socket connection
+
+const rooms = {};
 wss.on('connection', (socket) => {
-  const id = socket._socket.remoteAddress + ':' + socket._socket.remotePort;
-  logger.info(`WebSocket client connected: ${id}`);
+  	const id = socket._socket.remoteAddress + ':' + socket._socket.remotePort;
+  	logger.info(`WebSocket client connected: ${id}`);
 
-  // Send a salutation message
-  socket.send(JSON.stringify({
-    type: `salutation`,
-    value: `This WebSocket salutes you`,
-    id: `${id}`
-  }));
+  	const leave = room => {
+	  	if (!rooms[room][id]) return;
+	  	if (Object.keys(rooms[room]).length === 1) {
+	    	delete rooms[room];
+	  	} else {
+	    	delete rooms[room][id];
+  		}
+	}
 
-  // on socket message
-  socket.on('message', (msg) => {
-    logger.info(`New message from ${id}: ${msg}`);
-  });
+ 
+  	socket.send(JSON.stringify({
+  		type: `salutation`,
+		value: `This WebSocket salutes you`,
+		id: `${id}`
+  	}));
 
-  // on socket close
-  socket.on('close', () => {
-    logger.info(`WebSocket client disconnected: ${id}`);
-  });
+  
+  	socket.on('message', (msg) => {
+    	logger.info(`New message from ${id}: ${msg}`);
+    	logger.debug(`xd`);
+
+    	if (! msg.hasOwnProperty('type')) {
+    		logger.warn(`Message from user ${id} did not contain a 'type' property`);
+    		return;
+    	}
+
+	});
+
+
+  	socket.on('close', () => {
+    	logger.info(`WebSocket client disconnected: ${id}`);
+	});
 });
 
-// Run the server
+
 server.listen(port, () => {
   logger.info(`Example app listening on: http://localhost:${port}`);
 });

@@ -9,7 +9,7 @@ class Player extends SpriteAnimationComponent
     with HasGameRef<FlappyEmber>, CollisionCallbacks {
   Player() : super(size: Vector2.all(100), anchor: Anchor.center);
 
-  final _fallingSpeed = 400;
+  final _fallingSpeed = 350;
   bool _isDying = false;
 
   @override
@@ -17,10 +17,10 @@ class Player extends SpriteAnimationComponent
     position.x = size.x * 3;
     position.y = gameRef.size.y / 2;
     animation = await gameRef.loadSpriteAnimation(
-      'ember.png',
+      'bird_green.png',
       SpriteAnimationData.sequenced(
-        amount: 3,
-        textureSize: Vector2.all(16),
+        amount: 8,
+        textureSize: Vector2.all(1600),
         stepTime: 0.12,
       ),
     );

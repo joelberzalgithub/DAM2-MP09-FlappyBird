@@ -24,7 +24,7 @@ Future<void> main() async {
 }
 
 void showWindow(_) async {
-  windowManager.setMinimumSize(const Size(430.0, 600.0));
+  windowManager.setMinimumSize(const Size(0, 0));
   await windowManager.setTitle('FBBR');
 }
 
