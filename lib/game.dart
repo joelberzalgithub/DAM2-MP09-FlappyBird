@@ -61,6 +61,93 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Fi de la partida!'),
+        content: const SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Jugador 1  '),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 10,
+                        child: LinearProgressIndicator(
+                          value: 400 / 400,
+                          backgroundColor: Colors.transparent,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text('  40'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Jugador 2  '),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 10,
+                        child: LinearProgressIndicator(
+                          value: 300 / 400,
+                          backgroundColor: Colors.transparent,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text('  30'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Jugador 3  '),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 10,
+                        child: LinearProgressIndicator(
+                          value: 200 / 400,
+                          backgroundColor: Colors.transparent,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text('  20'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Jugador 4  '),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 10,
+                        child: LinearProgressIndicator(
+                          value: 100 / 400,
+                          backgroundColor: Colors.transparent,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Text('  10'),
+                ],
+              ),
+            ],
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () {
