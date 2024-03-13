@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/components.dart';
@@ -21,6 +22,7 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
   final _boxInterval = 2;
   late Player player;
   bool _gameOver = false;
+  int _time = 0;
 
   @override
   Future<void> onLoad() async {
@@ -30,6 +32,7 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
       player = Player(),
       ScreenHitbox(),
     ]);
+    countTime();
   }
 
   @override
@@ -49,6 +52,18 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
       return;
     }
     super.updateTree(dt);
+  }
+
+  void countTime() {
+    if (_gameOver) {
+      print('La partida ha durat $_time segons!');
+      return;
+    }
+    Future.delayed(const Duration(seconds: 1), () {
+      _time++;
+      print('Han transcorregut $_time segons');
+      countTime();
+    });
   }
 
   void gameOver() {
