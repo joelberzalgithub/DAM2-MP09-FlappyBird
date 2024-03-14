@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flappy_ember/player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:web_socket_channel/io.dart';
+
+import 'player.dart';
 
 enum ConnectionStatus {
   disconnected,
@@ -67,24 +68,40 @@ class AppData with ChangeNotifier {
             break;
 
           case 'join':
-            players.add(Player('testPlayer', false));
-            playerMap.putIfAbsent(data['value'], () => Player(data['name'], false));
+            if (playerMap.isEmpty) {
+              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_blue.png'));
+            } else if (playerMap.length == 1) {
+              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_red.png'));
+            } else if (playerMap.length == 2) {
+              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_green.png'));
+            } else {
+              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_orange.png'));
+            }
+
             break;
 
           case 'joined':
             id = data['value'];
-            playerMap.putIfAbsent(id, () => Player(data['name'], true));
+            playerMap.putIfAbsent(id, () => Player(data['name'], true, 'bird_blue.png'));
             connectionStatus = ConnectionStatus.waiting;
             notifyListeners();
             break;
 
           case 'move':
-            //playerMap[data['id']]?.x = (data['x']) as double;
             playerMap[data['id']]?.position.y = (data['y']) as double;
             break;
 
           case 'player':
-            playerMap.putIfAbsent(data['value'], () => Player('Leonard', false));
+            if (playerMap.isEmpty) {
+              playerMap.putIfAbsent(data['value'], () => Player('Leonard', false, 'bird_blue.png'));
+            } else if (playerMap.length == 1) {
+              playerMap.putIfAbsent(data['value'], () => Player('Leonard', false, 'bird_red.png'));
+            } else if (playerMap.length == 2) {
+              playerMap.putIfAbsent(data['value'], () => Player('Leonard', false, 'bird_green.png'));
+            } else {
+              playerMap.putIfAbsent(data['value'], () => Player('Leonard', false, 'bird_orange.png'));
+            }
+
             break;
 
           default:
