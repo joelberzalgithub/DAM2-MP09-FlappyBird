@@ -52,7 +52,6 @@ class MyAppState extends State<MyApp> {
       case ConnectionStatus.waiting:
         return const LayoutPlayers();
       case ConnectionStatus.connected:
-        print('returning game Widget');
         return GameWidget<FlappyEmber>.controlled(
           gameFactory: () => FlappyEmber(appData),
           overlayBuilderMap: {

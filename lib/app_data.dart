@@ -87,6 +87,10 @@ class AppData with ChangeNotifier {
             playerMap[data['id']]?.position.y = (data['y']) as double;
             break;
 
+          case 'player':
+            playerMap.putIfAbsent(data['value'], () => Player('Leonard', false));
+            break;
+
           default:
             messages += "Message from '${data['from']}': ${data['value']}\n";
             break;

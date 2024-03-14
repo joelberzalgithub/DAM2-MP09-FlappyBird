@@ -99,13 +99,19 @@ wss.on('connection', (socket) => {
         broadcast(currentRoom, id, {
           type: `join`, value: `${id}`, name: `${room}`
         });
-        if (rooms[currentRoom].length >= 4) currentRoom++;
         socket.send(JSON.stringify({
           type: `joined`,
           value: `${id}`,
           room: `${currentRoom}`,
           name: `${room}`
         }));
+        for (const property in rooms[currentRoom]) {
+          socket.send(JSON.stringify({
+          type: `player`,
+          value: property,
+        }));
+        }
+        if (rooms[currentRoom].length >= 4) currentRoom++;
       } else if (type === "leave") {
         leave(room);
       } else if (type === "alive") {
@@ -143,3 +149,43 @@ const broadcast = (room, excludedId, message) => {
     }
   });
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+class CountdownTimer {
+  constructor(duration, callback) {
+    this.duration = duration;
+    this.callback = callback;
+    this.timer = null;
+  }
+
+  start() {
+    this.timer = setInterval(() => {
+      if (this.duration <= 0) {
+        this.reset();
+        return;
+      }
+      console.log(this.duration);
+      this.duration--;
+    }, 1000);
+  }
+
+  reset() {
+    clearInterval(this.timer);
+    this.duration = 0;
+    console.log("Countdown reset.");
+    if (typeof this.callback === "function") {
+      this.callback();
+    }
+  }
+}
