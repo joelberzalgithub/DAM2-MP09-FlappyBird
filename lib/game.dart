@@ -6,6 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 
+import 'app_data.dart';
 import 'box_stack.dart';
 import 'ground.dart';
 import 'player.dart';
@@ -13,8 +14,11 @@ import 'sky.dart';
 
 class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
   late final BuildContext context;
+  late AppData appData;
+  List<Player> players = [];
+  Map<String, dynamic> playerMap = {};
 
-  FlappyEmber();
+  FlappyEmber(this.appData);
 
   final _random = Random();
   double speed = 200;
@@ -26,12 +30,20 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
+    players = appData.players;
+    playerMap = appData.playerMap;
+
     await addAll([
       Sky(),
       Ground(),
-      player = Player(),
+      player = appData.playerMap[appData.id]!,
       ScreenHitbox(),
     ]);
+
+    appData.playerMap.forEach((key, value) {if (!value.local) {
+      add(value);
+    }});
+
     countTime();
   }
 
@@ -43,6 +55,15 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
     if (_timeSinceBox > _boxInterval) {
       add(BoxStack(isBottom: _random.nextBool()));
       _timeSinceBox = 0;
+    }
+
+    if (!_gameOver) {
+      appData.sendCustomMessage({
+        'type': 'alive',
+        'id': appData.id,
+        'x': player.x,
+        'y': player.y,
+      });
     }
   }
 
@@ -68,7 +89,10 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
 
   void gameOver() {
     _gameOver = true;
-    showGameOverDialog();
+    appData.sendMessage('dead', 'x', player.x, 'y', player.y);
+    appData.playerMap = {};
+    appData.changeConnectionStatus(ConnectionStatus.connecting);
+    //showGameOverDialog();
   }
 
   void showGameOverDialog() {
@@ -166,7 +190,7 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/');
+              //Navigator.pushNamed(context, '/');
             },
             child: const Text("Tornar a la pantalla d'inici"),
           ),

@@ -4,7 +4,7 @@ const express = require('express');
 const http = require('http');
 
 const app = express();
-const port = 3000;
+const port = 8888;
 
 app.get('/', getHello);
 async function getHello(req, res) {
@@ -60,6 +60,7 @@ function shutDown() {
 
 
 logger.info(`starting WebSocket service...`);
+let currentRoom = 0;
 const wss = new WebSocket.Server({ server });
 
 
@@ -71,7 +72,9 @@ wss.on('connection', (socket) => {
   	const leave = room => {
 	  	if (!rooms[room][id]) return;
 	  	if (Object.keys(rooms[room]).length === 1) {
+        logger.info(`liberating room ${room}`);
 	    	delete rooms[room];
+        currentRoom = room;
 	  	} else {
 	    	delete rooms[room][id];
   		}
@@ -85,20 +88,42 @@ wss.on('connection', (socket) => {
   	}));
 
   
-  	socket.on('message', (msg) => {
+  	socket.on('message', msg => {
     	logger.info(`New message from ${id}: ${msg}`);
-    	logger.debug(`xd`);
+      let data = JSON.parse(msg);
+      const { type, value, room } = data;
 
-    	if (! msg.hasOwnProperty('type')) {
-    		logger.warn(`Message from user ${id} did not contain a 'type' property`);
-    		return;
-    	}
+      if (type === "join") {
+        if (! rooms[currentRoom]) rooms[currentRoom] = {};
+        if (! rooms[currentRoom][id]) rooms[currentRoom][id] = socket;
+        broadcast(currentRoom, id, {
+          type: `join`, value: `${id}`, name: `${room}`
+        });
+        if (rooms[currentRoom].length >= 4) currentRoom++;
+        socket.send(JSON.stringify({
+          type: `joined`,
+          value: `${id}`,
+          room: `${currentRoom}`,
+          name: `${room}`
+        }));
+      } else if (type === "leave") {
+        leave(room);
+      } else if (type === "alive") {
+        broadcast(currentRoom, id, {
+          type: 'move', id: `${id}`, x: data.x, y: data.y
+        });
+      } else if (type === 'dead') {
+        leave(currentRoom);
+      } else if (! type) {
+        // perhaps can be used?
+      }
 
 	});
 
 
   	socket.on('close', () => {
     	logger.info(`WebSocket client disconnected: ${id}`);
+      Object.keys(rooms).forEach(room => leave(room));
 	});
 });
 
@@ -106,3 +131,15 @@ wss.on('connection', (socket) => {
 server.listen(port, () => {
   logger.info(`Example app listening on: http://localhost:${port}`);
 });
+
+
+
+const broadcast = (room, excludedId, message) => {
+  if (!rooms[room]) return;
+
+  Object.entries(rooms[room]).forEach(([id, socket]) => {
+    if (id !== excludedId) {
+      socket.send(JSON.stringify(message));
+    }
+  });
+};

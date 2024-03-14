@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'app_data.dart';
 
 class LayoutLogin extends StatefulWidget {
   const LayoutLogin({Key? key}) : super(key: key);
@@ -19,6 +22,10 @@ class LayoutLoginState extends State<LayoutLogin> {
 
   @override
   Widget build(BuildContext context) {
+    final appData = Provider.of<AppData>(context);
+    ipController.text = appData.ip;
+    portController.text = appData.port;
+
     return Scaffold(
       body: OverflowBox(
         minHeight: 600,
@@ -51,7 +58,8 @@ class LayoutLoginState extends State<LayoutLogin> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      const Text('Flappy Bird multijugador: FBBR', style: TextStyle(fontSize: 25)),
+                      const Text('Flappy Bird multijugador: FBBR',
+                          style: TextStyle(fontSize: 25),),
                       TextFormField(
                         controller: ipController,
                         decoration: const InputDecoration(labelText: 'IP'),
@@ -62,13 +70,20 @@ class LayoutLoginState extends State<LayoutLogin> {
                       ),
                       TextFormField(
                         controller: nameController,
-                        decoration: const InputDecoration(labelText: 'Nom del jugador'),
+                        decoration:
+                            const InputDecoration(labelText: 'Nom del jugador'),
                         obscureText: true,
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () async {
-                          Navigator.pushNamed(context, '/game');
+                          // appData.connect();
+                          if (ipController.text != '' &&
+                              portController.text != '' &&
+                              nameController.text != '') {
+                            appData.name = nameController.text;
+                            appData.connectToServer();
+                          }
                         },
                         child: const Text('Iniciar partida'),
                       ),

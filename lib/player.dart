@@ -7,13 +7,19 @@ import 'game.dart';
 
 class Player extends SpriteAnimationComponent
     with HasGameRef<FlappyEmber>, CollisionCallbacks {
-  Player() : super(size: Vector2.all(100), anchor: Anchor.center);
+  String name = '';
+  bool local;
 
-  final _fallingSpeed = 350;
+  Player(this.name, this.local) : super(size: Vector2.all(100), anchor: Anchor.center);
+
+  int _fallingSpeed = 350;
   bool _isDying = false;
 
   @override
   Future<void> onLoad() async {
+    if (!local) {
+      _fallingSpeed = 0;
+    }
     position.x = size.x * 3;
     position.y = gameRef.size.y / 2;
     animation = await gameRef.loadSpriteAnimation(
@@ -37,7 +43,10 @@ class Player extends SpriteAnimationComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    if (!_isDying) {
+    if (!local) {
+      return;
+    }
+    if (!_isDying && other is! Player) {
       _isDying = true;
       addAll([
         ScaleEffect.to(
