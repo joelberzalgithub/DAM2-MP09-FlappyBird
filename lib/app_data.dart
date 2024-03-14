@@ -61,10 +61,6 @@ class AppData with ChangeNotifier {
         final Map <String, dynamic> data = jsonDecode(message);
         print(data);
 
-        if (connectionStatus != ConnectionStatus.connected) {
-          connectionStatus = ConnectionStatus.waiting;
-        }
-
         switch (data['type']) {
           case 'salutation':
             sendMessage('join', 'room', name, 'value', name);
@@ -150,7 +146,7 @@ class AppData with ChangeNotifier {
 
   void startTimer() {
     Timer(const Duration(seconds: 5), () {
-      connectionStatus = ConnectionStatus.connected;
+        connectionStatus = ConnectionStatus.connected;
       notifyListeners();
     });
   }
