@@ -8,22 +8,23 @@ import 'game.dart';
 class Player extends SpriteAnimationComponent
     with HasGameRef<FlappyEmber>, CollisionCallbacks {
   String name = '';
+  String sprite;
   bool local;
 
-  Player(this.name, this.local) : super(size: Vector2.all(100), anchor: Anchor.center);
+  Player(this.name, this.local, this.sprite) : super(size: Vector2.all(100), anchor: Anchor.center);
 
   int _fallingSpeed = 350;
-  bool _isDying = false;
+  bool isDying = false;
 
   @override
   Future<void> onLoad() async {
+
     if (!local) {
       _fallingSpeed = 0;
     }
     position.x = size.x * 3;
     position.y = gameRef.size.y / 2;
-    animation = await gameRef.loadSpriteAnimation(
-      'bird_green.png',
+    animation = await gameRef.loadSpriteAnimation(sprite,
       SpriteAnimationData.sequenced(
         amount: 8,
         textureSize: Vector2.all(1600),
@@ -46,8 +47,8 @@ class Player extends SpriteAnimationComponent
     if (!local) {
       return;
     }
-    if (!_isDying && other is! Player) {
-      _isDying = true;
+    if (!isDying && other is! Player) {
+      isDying = true;
       addAll([
         ScaleEffect.to(
           Vector2(0.0, 0.0),

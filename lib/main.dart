@@ -52,12 +52,14 @@ class MyAppState extends State<MyApp> {
       case ConnectionStatus.waiting:
         return const LayoutPlayers();
       case ConnectionStatus.connected:
-        return GameWidget<FlappyEmber>.controlled(
-          gameFactory: () => FlappyEmber(appData),
-          overlayBuilderMap: {
-            'GameOverlay': (_, game) => GameOverlay(game: game),
-          },
-        );
+        return appData.playerMap.isNotEmpty
+            ? GameWidget<FlappyEmber>.controlled(
+                gameFactory: () => FlappyEmber(appData),
+                overlayBuilderMap: {
+                  'GameOverlay': (_, game) => GameOverlay(game: game),
+                },
+              )
+            : const LayoutLogin();
       default:
         return const LayoutLogin();
     }

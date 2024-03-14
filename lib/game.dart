@@ -30,20 +30,17 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
-    players = appData.players;
-    playerMap = appData.playerMap;
 
     await addAll([
       Sky(),
       Ground(),
-      player = appData.playerMap[appData.id]!,
+      player =  appData.playerMap[appData.id]?? Player('xd', false, 'bird_orange.png'),
       ScreenHitbox(),
     ]);
 
     appData.playerMap.forEach((key, value) {if (!value.local) {
       add(value);
     }});
-
     countTime();
   }
 
@@ -91,7 +88,7 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
     _gameOver = true;
     appData.sendMessage('dead', 'x', player.x, 'y', player.y);
     appData.playerMap = {};
-    appData.changeConnectionStatus(ConnectionStatus.connecting);
+    appData.changeConnectionStatus(ConnectionStatus.disconnected);
     //showGameOverDialog();
   }
 
