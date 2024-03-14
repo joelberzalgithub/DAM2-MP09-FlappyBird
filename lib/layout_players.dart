@@ -19,28 +19,7 @@ class LayoutPlayersState extends State<LayoutPlayers> {
     super.initState();
     counter = '';
     time = 3;
-    countTime();
-  }
-
-  void countTime() {
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        if (time < 0) {
-          //Provider.of<AppData>(context, listen: false).connectionStatus = ConnectionStatus.connected;
-          // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-          Provider.of<AppData>(context, listen: false).notifyListeners();
-          return;
-        } else {
-          if (time < 1) {
-            counter = 'GO!';
-          } else {
-            counter = time.toString();
-          }
-          time--;
-          countTime();
-        }
-      });
-    });
+    //countTime();
   }
   
   @override
@@ -91,7 +70,7 @@ class LayoutPlayersState extends State<LayoutPlayers> {
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: Text(
-                          counter,
+                          appData.counter,
                           style: const TextStyle(
                             fontSize: 35.0,
                           ),

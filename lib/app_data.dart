@@ -20,6 +20,8 @@ class AppData with ChangeNotifier {
   String port = '8888';
   String name = '';
   String id = '';
+  late String counter = '';
+  late int time = 3;
   bool repaint = true;
   List<Player> players = [];
   Map<String, Player> playerMap = {};
@@ -93,7 +95,8 @@ class AppData with ChangeNotifier {
             break;
 
           case 'start':
-            connectionStatus = ConnectionStatus.connected;
+            countTime();
+            //connectionStatus = ConnectionStatus.connected;
             notifyListeners();
             break;
 
@@ -176,5 +179,24 @@ class AppData with ChangeNotifier {
 
   void addPlayer(Player player) {
     players.add(player);
+  }
+
+  void countTime() {
+    Future.delayed(const Duration(seconds: 1), () {
+        if (time < 0) {
+          connectionStatus = ConnectionStatus.connected;
+          notifyListeners();
+          return;
+        } else {
+          if (time < 1) {
+            counter = 'GO!';
+          } else {
+            counter = time.toString();
+          }
+          time--;
+          notifyListeners();
+          countTime();
+        }
+    });
   }
 }
