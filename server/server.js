@@ -111,7 +111,15 @@ wss.on('connection', (socket) => {
           value: property,
         }));
         }
-        if (rooms[currentRoom].length >= 4) currentRoom++;
+        if (Object.keys(rooms[currentRoom]).length >= 2) {
+          //currentRoom++;
+          setTimeout(() => {
+            logger.warn('STARTING');
+            broadcast(currentRoom, 'xd', {
+              type: 'start'
+            });
+          }, 3000);
+        };
       } else if (type === "leave") {
         leave(room);
       } else if (type === "alive") {
@@ -154,38 +162,3 @@ const broadcast = (room, excludedId, message) => {
 
 
 
-
-
-
-
-
-
-
-
-class CountdownTimer {
-  constructor(duration, callback) {
-    this.duration = duration;
-    this.callback = callback;
-    this.timer = null;
-  }
-
-  start() {
-    this.timer = setInterval(() => {
-      if (this.duration <= 0) {
-        this.reset();
-        return;
-      }
-      console.log(this.duration);
-      this.duration--;
-    }, 1000);
-  }
-
-  reset() {
-    clearInterval(this.timer);
-    this.duration = 0;
-    console.log("Countdown reset.");
-    if (typeof this.callback === "function") {
-      this.callback();
-    }
-  }
-}

@@ -64,6 +64,7 @@ class AppData with ChangeNotifier {
 
         switch (data['type']) {
           case 'salutation':
+            connectionStatus = ConnectionStatus.waiting;
             sendMessage('join', 'room', name, 'value', name);
             break;
 
@@ -89,6 +90,11 @@ class AppData with ChangeNotifier {
 
           case 'move':
             playerMap[data['id']]?.position.y = (data['y']) as double;
+            break;
+
+          case 'start':
+            connectionStatus = ConnectionStatus.connected;
+            notifyListeners();
             break;
 
           case 'player':

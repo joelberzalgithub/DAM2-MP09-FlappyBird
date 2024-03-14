@@ -26,7 +26,7 @@ class LayoutPlayersState extends State<LayoutPlayers> {
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         if (time < 0) {
-          Provider.of<AppData>(context, listen: false).connectionStatus = ConnectionStatus.connected;
+          //Provider.of<AppData>(context, listen: false).connectionStatus = ConnectionStatus.connected;
           // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
           Provider.of<AppData>(context, listen: false).notifyListeners();
           return;
