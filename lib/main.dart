@@ -10,6 +10,7 @@ import 'game.dart';
 import 'game_overlay.dart';
 import 'layout_login.dart';
 import 'layout_players.dart';
+import 'layout_ranking.dart';
 
 void main() async {
   try {
@@ -25,7 +26,7 @@ void main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => AppData(),
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -60,6 +61,8 @@ class MyAppState extends State<MyApp> {
                 },
               )
             : const LayoutLogin();
+      case ConnectionStatus.disconnecting:
+        return const LayoutRanking();
       default:
         return const LayoutLogin();
     }

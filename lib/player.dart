@@ -15,6 +15,7 @@ class Player extends SpriteAnimationComponent
 
   int _fallingSpeed = 350;
   bool isDying = false;
+  int score = 0;
 
   @override
   Future<void> onLoad() async {

@@ -23,7 +23,6 @@ class AppData with ChangeNotifier {
   late String counter = '';
   late int time = 3;
   bool repaint = true;
-  List<Player> players = [];
   Map<String, Player> playerMap = {};
   Timer? timer;
 
@@ -177,26 +176,41 @@ class AppData with ChangeNotifier {
     });
   }
 
-  void addPlayer(Player player) {
-    players.add(player);
-  }
-
   void countTime() {
     Future.delayed(const Duration(seconds: 1), () {
-        if (time < 0) {
-          connectionStatus = ConnectionStatus.connected;
-          notifyListeners();
-          return;
+      if (time < 0) {
+        time = 3;
+        counter = '';
+        connectionStatus = ConnectionStatus.connected;
+        notifyListeners();
+        return;
+      } else {
+        if (time < 1) {
+          counter = 'GO!';
         } else {
-          if (time < 1) {
-            counter = 'GO!';
-          } else {
-            counter = time.toString();
-          }
-          time--;
-          notifyListeners();
-          countTime();
+          counter = time.toString();
         }
+        time--;
+        notifyListeners();
+        countTime();
+      }
     });
+  }
+
+  void setScore(String playerId, int score) {
+    if (playerMap.containsKey(playerId)) {
+      playerMap[playerId]!.score = score;
+      notifyListeners();
+    }
+  }
+
+  int getHighScore() {
+    var highScore = -1;
+    playerMap.forEach((key, value) {
+      if (value.score > highScore) {
+        highScore = value.score;
+      }
+    });
+    return highScore; 
   }
 }

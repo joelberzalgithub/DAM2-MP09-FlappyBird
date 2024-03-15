@@ -72,7 +72,6 @@ class LayoutLoginState extends State<LayoutLogin> {
                         controller: nameController,
                         decoration:
                             const InputDecoration(labelText: 'Nom del jugador'),
-                        obscureText: true,
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
