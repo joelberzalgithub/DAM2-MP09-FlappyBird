@@ -58,6 +58,7 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
         'id': appData.id,
         'x': player.x,
         'y': player.y,
+        'score': player.score,
       });
     }
   }
@@ -73,12 +74,11 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
   void countTime() {
     if (_gameOver) {
       appData.setScore(appData.id, _time);
-      print('La partida ha durat $_time segons!');
       return;
     }
     Future.delayed(const Duration(seconds: 1), () {
       _time++;
-      print('Han transcorregut $_time segons');
+      appData.setScore(appData.id, _time);
       countTime();
     });
   }

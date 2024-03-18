@@ -68,14 +68,14 @@ class LayoutRankingState extends State<LayoutRanking> {
                                       child: SizedBox(
                                         height: 10,
                                         child: LinearProgressIndicator(
-                                          value: player.score / appData.getHighScore(),
+                                          value: appData.playerMap[playerId]!.score / appData.getHighScore(),
                                           backgroundColor: Colors.transparent,
                                           color: Colors.blue,
                                         ),
                                       ),
                                     ),
                                   ),
-                                  Text('  ${player.score}'),
+                                  Text('  ${appData.playerMap[playerId]!.score}'),
                                 ],
                               ),
                             );

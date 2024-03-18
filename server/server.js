@@ -124,7 +124,7 @@ wss.on('connection', (socket) => {
         leave(room);
       } else if (type === "alive") {
         broadcast(currentRoom, id, {
-          type: 'move', id: `${id}`, x: data.x, y: data.y
+          type: 'move', id: `${id}`, x: data.x, y: data.y, score: data.score
         });
       } else if (type === 'dead') {
         leave(currentRoom);

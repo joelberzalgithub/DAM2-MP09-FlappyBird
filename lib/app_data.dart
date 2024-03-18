@@ -91,6 +91,7 @@ class AppData with ChangeNotifier {
 
           case 'move':
             playerMap[data['id']]?.position.y = (data['y']) as double;
+            playerMap[data['id']]?.score = (data['score']) as int;
             break;
 
           case 'start':
