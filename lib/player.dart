@@ -10,18 +10,23 @@ class Player extends SpriteAnimationComponent
   String name = '';
   String sprite;
   bool local;
+  late TextComponent nameComponent;
 
-  Player(this.name, this.local, this.sprite) : super(size: Vector2.all(100), anchor: Anchor.center);
+  Player(this.name, this.local, this.sprite) : super(size: Vector2.all(100), anchor: Anchor.center) {
+    nameComponent = TextComponent(text: name);
+    nameComponent.anchor = Anchor.topCenter;
+  }
 
   int _fallingSpeed = 350;
   bool isDying = false;
   int score = 0;
+  double opacity = 1.0;
 
   @override
   Future<void> onLoad() async {
-
     if (!local) {
       _fallingSpeed = 0;
+      opacity = 0.5;
     }
     position.x = size.x * 3;
     position.y = gameRef.size.y / 2;
@@ -40,6 +45,19 @@ class Player extends SpriteAnimationComponent
   void update(double dt) {
     super.update(dt);
     position.y += dt * _fallingSpeed;
+    nameComponent.position = Vector2(position.x, position.y);
+  }
+  
+  @override
+  void render(Canvas canvas) {
+    if (!local) {
+      canvas.saveLayer(Rect.fromLTWH(0, 0, size.x, size.y), Paint()..color = Color.fromRGBO(255, 255, 255, opacity));
+    }
+    super.render(canvas);
+    if (!local) {
+      canvas.restore();
+    }
+    nameComponent.render(canvas);
   }
 
   @override

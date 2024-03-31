@@ -25,6 +25,7 @@ class AppData with ChangeNotifier {
   bool repaint = true;
   Map<String, Player> playerMap = {};
   Timer? timer;
+  int alivePlayers = 0;
 
   IOWebSocketChannel? _socketClient;
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
@@ -213,5 +214,9 @@ class AppData with ChangeNotifier {
       }
     });
     return highScore; 
+  }
+
+  void initAlivePlayers() {
+    alivePlayers = playerMap.length;
   }
 }
