@@ -127,7 +127,7 @@ wss.on('connection', (socket) => {
           type: 'move', id: `${id}`, x: data.x, y: data.y, score: data.score
         });
       } else if (type === 'dead') {
-        leave(currentRoom);
+        // leave(currentRoom);
       } else if (! type) {
         // perhaps can be used?
       }

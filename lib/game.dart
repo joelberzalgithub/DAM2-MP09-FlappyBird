@@ -72,7 +72,7 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
   }
 
   void countTime() {
-    if (_gameOver) {
+    if (player.isDying) {
       appData.setScore(appData.id, _time);
       return;
     }
