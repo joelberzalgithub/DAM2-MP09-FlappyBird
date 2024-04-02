@@ -226,4 +226,11 @@ class AppData with ChangeNotifier {
   void initAlivePlayers() {
     alivePlayers = playerMap.length;
   }
+
+  void sortPlayerMap() {
+    playerMap = Map.fromEntries(playerMap.entries.toList()
+        // ignore: avoid_dynamic_calls
+        ..sort((a, b) => (b.value.score).compareTo(a.value.score)),);
+    notifyListeners();
+  }
 }
