@@ -87,7 +87,7 @@ class LayoutRankingState extends State<LayoutRanking> {
                         child: ElevatedButton(
                           onPressed: () async {
                             appData.playerMap = {};
-                            appData.changeConnectionStatus(ConnectionStatus.disconnected);
+                            appData.disconnectFromServer();
                           },
                           child: const Text("Tornar a la pantalla d'inici"),
                         ),
