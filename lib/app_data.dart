@@ -85,7 +85,14 @@ class AppData with ChangeNotifier {
 
           case 'joined':
             id = data['value'];
-            playerMap.putIfAbsent(id, () => Player(data['name'], true, 'bird_blue.png'));
+            name = data['name'];
+
+            if (playerMap.containsKey(id)) {
+              playerMap[id]!.name = name;
+            } else {
+              playerMap.putIfAbsent(id, () => Player(data['name'], true, 'bird_blue.png'));
+            }
+
             connectionStatus = ConnectionStatus.waiting;
             notifyListeners();
             break;
@@ -103,13 +110,13 @@ class AppData with ChangeNotifier {
 
           case 'player':
             if (playerMap.isEmpty) {
-              playerMap.putIfAbsent(data['value'], () => Player('Leonard', false, 'bird_blue.png'));
+              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_blue.png'));
             } else if (playerMap.length == 1) {
-              playerMap.putIfAbsent(data['value'], () => Player('Leonard', false, 'bird_red.png'));
+              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_red.png'));
             } else if (playerMap.length == 2) {
-              playerMap.putIfAbsent(data['value'], () => Player('Leonard', false, 'bird_green.png'));
+              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_green.png'));
             } else {
-              playerMap.putIfAbsent(data['value'], () => Player('Leonard', false, 'bird_orange.png'));
+              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_orange.png'));
             }
 
             break;

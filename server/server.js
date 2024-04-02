@@ -66,79 +66,82 @@ const wss = new WebSocket.Server({ server });
 
 const rooms = {};
 wss.on('connection', (socket) => {
-  	const id = socket._socket.remoteAddress + ':' + socket._socket.remotePort;
-  	logger.info(`WebSocket client connected: ${id}`);
+  const id = socket._socket.remoteAddress + ':' + socket._socket.remotePort;
+  logger.info(`WebSocket client connected: ${id}`);
 
-  	const leave = room => {
-	  	if (!rooms[room][id]) return;
-	  	if (Object.keys(rooms[room]).length === 1) {
-        logger.info(`liberating room ${room}`);
-	    	delete rooms[room];
-        currentRoom = room;
-	  	} else {
-	    	delete rooms[room][id];
-  		}
-	}
+  const leave = room => {
+    if (!rooms[room][id]) return;
+    if (Object.keys(rooms[room]).length === 1) {
+      logger.info(`liberating room ${room}`);
+      delete rooms[room];
+      currentRoom = room;
+    } else {
+      delete rooms[room][id];
+    }
+  }
 
- 
-  	socket.send(JSON.stringify({
-  		type: `salutation`,
-		value: `This WebSocket salutes you`,
-		id: `${id}`
-  	}));
 
-  
-  	socket.on('message', msg => {
-    	logger.info(`New message from ${id}: ${msg}`);
-      let data = JSON.parse(msg);
-      const { type, value, room } = data;
+  socket.send(JSON.stringify({
+    type: `salutation`,
+    value: `This WebSocket salutes you`,
+    id: `${id}`
+  }));
 
-      if (type === "join") {
-        if (! rooms[currentRoom]) rooms[currentRoom] = {};
-        if (! rooms[currentRoom][id]) rooms[currentRoom][id] = socket;
-        broadcast(currentRoom, id, {
-          type: `join`, value: `${id}`, name: `${room}`
-        });
+
+  socket.on('message', msg => {
+    logger.info(`New message from ${id}: ${msg}`);
+    let data = JSON.parse(msg);
+    const { type, value, room } = data;
+
+    if (type === "join") {
+      if (!rooms[currentRoom]) rooms[currentRoom] = {};
+      if (!rooms[currentRoom][id]) rooms[currentRoom][id] = { socket, room };
+      broadcast(currentRoom, id, {
+        type: `join`, value: `${id}`, name: `${room}`
+      });
+      socket.send(JSON.stringify({
+        type: `joined`,
+        value: `${id}`,
+        room: `${currentRoom}`,
+        name: `${room}`
+      }));
+      for (const property in rooms[currentRoom]) {
         socket.send(JSON.stringify({
-          type: `joined`,
-          value: `${id}`,
-          room: `${currentRoom}`,
-          name: `${room}`
-        }));
-        for (const property in rooms[currentRoom]) {
-          socket.send(JSON.stringify({
           type: `player`,
           value: property,
+          name: rooms[currentRoom][property].room
         }));
-        }
-        if (Object.keys(rooms[currentRoom]).length >= 2) {
-          //currentRoom++;
-          setTimeout(() => {
-            logger.warn('STARTING');
-            broadcast(currentRoom, 'xd', {
-              type: 'start'
-            });
-          }, 3000);
-        };
-      } else if (type === "leave") {
-        leave(room);
-      } else if (type === "alive") {
-        broadcast(currentRoom, id, {
-          type: 'move', id: `${id}`, x: data.x, y: data.y, score: data.score
-        });
-      } else if (type === 'dead') {
-        // leave(currentRoom);
-      } else if (! type) {
-        // perhaps can be used?
       }
+      if (Object.keys(rooms[currentRoom]).length >= 2) {
+        //currentRoom++;
+        setTimeout(() => {
+          logger.warn('STARTING');
+          broadcast(currentRoom, 'xd', {
+            type: 'start'
+          });
+        }, 3000);
+      };
+    } else if (type === "leave") {
+      leave(room);
+    } else if (type === "alive") {
+      broadcast(currentRoom, id, {
+        type: 'move', id: `${id}`, x: data.x, y: data.y, score: data.score
+      });
+    } else if (type === 'dead') {
+      broadcast(currentRoom, id, {
+        type: 'dead', id: `${id}`
+      });
+    } else if (!type) {
+      // perhaps can be used?
+    }
 
-	});
+  });
 
 
-  	socket.on('close', () => {
-    	logger.info(`WebSocket client disconnected: ${id}`);
-      Object.keys(rooms).forEach(room => leave(room));
-	});
+  socket.on('close', () => {
+    logger.info(`WebSocket client disconnected: ${id}`);
+    Object.keys(rooms).forEach(room => leave(room));
+  });
 });
 
 
@@ -151,9 +154,9 @@ server.listen(port, () => {
 const broadcast = (room, excludedId, message) => {
   if (!rooms[room]) return;
 
-  Object.entries(rooms[room]).forEach(([id, socket]) => {
+  Object.entries(rooms[room]).forEach(([id, player]) => {
     if (id !== excludedId) {
-      socket.send(JSON.stringify(message));
+      player.socket.send(JSON.stringify(message));
     }
   });
 };
