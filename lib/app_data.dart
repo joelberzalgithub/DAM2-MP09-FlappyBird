@@ -124,10 +124,10 @@ class AppData with ChangeNotifier {
             if (data['name'] == name) {
               break;
             }
-            if (playerMap.isEmpty) {
+            /*if (playerMap.isEmpty) {
               playerMap.putIfAbsent(data['value'],
                   () => Player(data['name'], false, 'bird_blue.png'));
-            } else if (playerMap.length == 1) {
+            } else */if (playerMap.length == 1) {
               playerMap.putIfAbsent(data['value'],
                   () => Player(data['name'], false, 'bird_red.png'));
             } else if (playerMap.length == 2) {

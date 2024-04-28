@@ -2,7 +2,7 @@ const Player = require('./classes/player');
 const Room = require('./classes/room');
 const logger = require('./logger/logger');
 
-const rooms = [];
+let rooms = [];
 async function sendSalutation(socket, id) {
     socket.send(JSON.stringify(
         {
@@ -62,6 +62,12 @@ async function handleDeadMessage(message, playerId) {
             id: `${playerId}`,
         }
     ));
+    await room.removePlayer(playerId);
+    if (room.players.length === 0) {
+        logger.warn(`The room ${room.id} is empty, clearing it...`);
+        rooms = rooms.filter(r => r.id !== room.id);
+    }
+    
 }
 
 module.exports = {

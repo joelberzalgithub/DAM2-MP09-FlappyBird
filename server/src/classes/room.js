@@ -40,14 +40,28 @@ class Room {
         player.socket.send(pMessage);
         logger.info(`${player.id} joined room ${this.id}`);
 
-        if (playerCount >= 1) {
-            logger.info(`Atleast 2 players joined room ${this.id}, match starting...`);
+        if (playerCount >= 3) {
+            logger.info(`4 players joined room ${this.id}, match starting...`);
             this.startMatch();
         }
     }
 
     getPlayers() {
         return this.players;
+    }
+
+    getPlayer(playerId) {
+        const player = this.players.find((player) => {return player.id === playerId});
+        return player;
+    }
+
+    removePlayer(playerId) {
+        const player = this.getPlayer(playerId);
+        this.players = this.players.filter(p => p !== player);
+
+        if (this.players.length === 0) {
+            this.match.stop();
+        }
     }
 
     hasPlayer(playerId) {
@@ -103,6 +117,10 @@ class Room {
                 height: stackHeight
             }
         ));
+    }
+
+    stopMatch() {
+        this.match.stop();
     }
 }
 

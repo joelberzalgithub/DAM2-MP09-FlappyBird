@@ -30,11 +30,14 @@ class Match {
 
             if (this.targetTime >= 0.05) {
                 this.targetTime = this.targetTime * 0.95;
-                logger.info(`Room ${this.room.id} will now spawn boxes every ${this.targetTime} seconds`);
             }
 
             this.room.spawnBox();
         }
+    }
+
+    stop() {
+        this.isRunning = false;
     }
 }
 
