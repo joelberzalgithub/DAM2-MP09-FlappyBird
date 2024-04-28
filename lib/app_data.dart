@@ -26,6 +26,8 @@ class AppData with ChangeNotifier {
   Map<String, Player> playerMap = {};
   Timer? timer;
   int alivePlayers = 0;
+  bool? isNewBoxBottom;
+  int? newBoxHeight;
 
   IOWebSocketChannel? _socketClient;
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
@@ -61,24 +63,33 @@ class AppData with ChangeNotifier {
     _socketClient = IOWebSocketChannel.connect('ws://$ip:$port');
     _socketClient!.stream.listen(
       (message) {
-        final Map <String, dynamic> data = jsonDecode(message);
-        print(data);
+        final Map<String, dynamic> data = jsonDecode(message);
 
         switch (data['type']) {
           case 'salutation':
             connectionStatus = ConnectionStatus.waiting;
-            sendMessage('join', 'room', name, 'value', name);
+            sendMessage(
+              'join',
+              'room',
+              name,
+              'nickname',
+              name,
+            );
             break;
 
           case 'join':
             if (playerMap.isEmpty) {
-              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_blue.png'));
+              playerMap.putIfAbsent(data['value'],
+                  () => Player(data['name'], false, 'bird_blue.png'));
             } else if (playerMap.length == 1) {
-              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_red.png'));
+              playerMap.putIfAbsent(data['value'],
+                  () => Player(data['name'], false, 'bird_red.png'));
             } else if (playerMap.length == 2) {
-              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_green.png'));
+              playerMap.putIfAbsent(data['value'],
+                  () => Player(data['name'], false, 'bird_green.png'));
             } else {
-              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_orange.png'));
+              playerMap.putIfAbsent(data['value'],
+                  () => Player(data['name'], false, 'bird_orange.png'));
             }
 
             break;
@@ -90,7 +101,8 @@ class AppData with ChangeNotifier {
             if (playerMap.containsKey(id)) {
               playerMap[id]!.name = name;
             } else {
-              playerMap.putIfAbsent(id, () => Player(data['name'], true, 'bird_blue.png'));
+              playerMap.putIfAbsent(
+                  id, () => Player(data['name'], true, 'bird_blue.png'));
             }
 
             connectionStatus = ConnectionStatus.waiting;
@@ -109,16 +121,29 @@ class AppData with ChangeNotifier {
             break;
 
           case 'player':
+            if (data['name'] == name) {
+              break;
+            }
             if (playerMap.isEmpty) {
-              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_blue.png'));
+              playerMap.putIfAbsent(data['value'],
+                  () => Player(data['name'], false, 'bird_blue.png'));
             } else if (playerMap.length == 1) {
-              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_red.png'));
+              playerMap.putIfAbsent(data['value'],
+                  () => Player(data['name'], false, 'bird_red.png'));
             } else if (playerMap.length == 2) {
-              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_green.png'));
+              playerMap.putIfAbsent(data['value'],
+                  () => Player(data['name'], false, 'bird_green.png'));
             } else {
-              playerMap.putIfAbsent(data['value'], () => Player(data['name'], false, 'bird_orange.png'));
+              playerMap.putIfAbsent(data['value'],
+                  () => Player(data['name'], false, 'bird_orange.png'));
             }
 
+            break;
+
+          case 'box':
+            print(data);
+            isNewBoxBottom = data['isBottom'];
+            newBoxHeight = data['height'];
             break;
 
           default:
@@ -180,7 +205,7 @@ class AppData with ChangeNotifier {
 
   void startTimer() {
     Timer(const Duration(seconds: 5), () {
-        connectionStatus = ConnectionStatus.connected;
+      connectionStatus = ConnectionStatus.connected;
       notifyListeners();
     });
   }
@@ -220,7 +245,7 @@ class AppData with ChangeNotifier {
         highScore = value.score;
       }
     });
-    return highScore; 
+    return highScore;
   }
 
   void initAlivePlayers() {
@@ -228,9 +253,12 @@ class AppData with ChangeNotifier {
   }
 
   void sortPlayerMap() {
-    playerMap = Map.fromEntries(playerMap.entries.toList()
+    playerMap = Map.fromEntries(
+      playerMap.entries.toList()
         // ignore: avoid_dynamic_calls
-        ..sort((a, b) => (b.value.score).compareTo(a.value.score)),);
+        ..sort((a, b) => (b.value.score).compareTo(a.value.score)),
+    );
     notifyListeners();
   }
+
 }

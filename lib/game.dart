@@ -47,10 +47,21 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
     super.update(dt);
     _timeSinceBox += dt;
     speed += 10 * dt;
-    
+    /*
     if (_timeSinceBox > _boxInterval) {
       add(BoxStack(isBottom: _random.nextBool()));
       _timeSinceBox = 0;
+    }
+    */
+
+    bool? isBottom = appData.isNewBoxBottom;
+    int? boxHeight = appData.newBoxHeight;
+
+    if (isBottom != null && boxHeight != null) {
+      add(BoxStack(isBottom: isBottom, stackHeight: boxHeight));
+      appData.isNewBoxBottom = null;
+      appData.newBoxHeight = null;
+      appData.forceNotifyListeners();
     }
 
     if (!_gameOver) {

@@ -146,7 +146,9 @@ wss.on('connection', (socket) => {
 
 
 server.listen(port, () => {
-  logger.info(`Example app listening on: http://localhost:${port}`);
+    const address = server.address(); // Get server address
+    const fullUrl = `http://${address.address}:${address.port}`; // Construct full URL
+    logger.info(`Server listening on ${fullUrl}`);
 });
 
 

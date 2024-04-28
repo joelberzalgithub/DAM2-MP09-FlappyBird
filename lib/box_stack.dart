@@ -6,19 +6,16 @@ import 'box.dart';
 import 'game.dart';
 
 class BoxStack extends PositionComponent with HasGameRef<FlappyEmber> {
-  BoxStack({required this.isBottom});
+  BoxStack({required this.isBottom, required this.stackHeight});
 
   final bool isBottom;
-
-  static final Random _rng = Random();
+  final int stackHeight;
 
   @override
   Future<void> onLoad() async {
     position.x = gameRef.size.x;
     final gameHeight = gameRef.size.y;
     final boxHeight = Box.initialSize.y;
-    final maxStackHeight = (gameRef.size.y / Box.initialSize.y).floor() - 2;
-    final stackHeight = _rng.nextInt(maxStackHeight + 1);
     final boxSpacing = boxHeight * (2 / 3);
     final initialY = isBottom ? gameHeight - boxHeight : -boxHeight / 3;
     final boxes = List.generate(stackHeight, (i) {
