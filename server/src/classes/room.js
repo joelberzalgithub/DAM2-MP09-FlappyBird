@@ -11,6 +11,19 @@ class Room {
         this.match = null;
     }
 
+    /**
+     * Function to add a new player to the room.
+     * 
+     * First checks if the room is joinable by asserting that the timer is null and the 
+     * player count is less than 4.
+     * If the room is joinable, the player is added. 
+     * Then all the players in the room are notified of the new player.
+     * If the player count is 3 before adding the player the match starts.
+     * 
+     * @param {
+     * } player 
+     * @returns 
+     */
     addPlayer(player) {
         const playerCount = this.players.length;
         if (this.timer !== null || playerCount >= 4) {
@@ -46,15 +59,34 @@ class Room {
         }
     }
 
+    /**
+     * Function to return the player list.
+     * 
+     * @returns 
+     */
     getPlayers() {
         return this.players;
     }
 
+    /**
+     * Function to get an specific player.
+     * 
+     * @param {*} playerId 
+     * @returns 
+     */
     getPlayer(playerId) {
         const player = this.players.find((player) => {return player.id === playerId});
         return player;
     }
 
+    /**
+     * Function to remove a player from the list.
+     * 
+     * If a player with the given id is found, it is filtered out of the player list.
+     * If the player list length becomes 0 the match is stoped.
+     * 
+     * @param {*} playerId 
+     */
     removePlayer(playerId) {
         const player = this.getPlayer(playerId);
         this.players = this.players.filter(p => p !== player);
@@ -64,6 +96,15 @@ class Room {
         }
     }
 
+    /**
+     * Function to check if a player exists in the room.
+     * 
+     * It searches for the player in the player array. If found returns true.
+     * Else it returns false.
+     * 
+     * @param {*} playerId 
+     * @returns 
+     */
     hasPlayer(playerId) {
         var hasPlayer = false;
         this.players.forEach((player) => {
@@ -72,6 +113,13 @@ class Room {
         return hasPlayer;
     }
 
+    /**
+     * Function to send a message to all the players.
+     * 
+     * Sends a message to all the players with a socket in the ready state.
+     * 
+     * @param {*} message 
+     */
     broadcast(message) {
         this.players.forEach((player) => {
             const playerSocket = player.socket;
@@ -81,6 +129,15 @@ class Room {
         });
     }
 
+    /**
+     * Function to send a message to all the players except one.
+     * 
+     * Sends a message to all the players with a socket in the ready state. And different
+     * to the given one.
+     * 
+     * @param {*} message 
+     * @param {*} p 
+     */
     broadcastOthers(message, p) {
         this.players.forEach((player) => {
             const playerSocket = player.socket;
@@ -90,6 +147,13 @@ class Room {
         });
     }
 
+    /**
+     * Function to start the match associated with the room.
+     * 
+     * First broadcasts the start message after a certain timeout.
+     * Then a new match instance is created and started.
+     * 
+     */
     startMatch() {
         this.timer = setTimeout(() => {
             const message = JSON.stringify(
@@ -105,6 +169,13 @@ class Room {
         this.match.start();
     }
 
+    /**
+     * Function to handle the box spawn of the match,
+     * 
+     * It randomly calculates the next obstacle of the match.
+     * Then broadcasts it to the players.
+     * 
+     */
     spawnBox() {
         const isBottom = Math.random() * 100 > 50;
         const maxStackHeight = 4;
@@ -119,6 +190,12 @@ class Room {
         ));
     }
 
+    /**
+     * Function to stop the match.
+     * 
+     * It stops the associated match.
+     * 
+     */
     stopMatch() {
         this.match.stop();
     }

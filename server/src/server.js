@@ -8,6 +8,7 @@ const messages = require('./socketMessages');
 
 process.on('SIGTERM', shutDown);
 process.on('SIGINT', shutDown);
+
 function shutDown() {
     logger.info('Received kill signal, shutting down gracefully');
     server.close();

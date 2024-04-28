@@ -10,11 +10,25 @@ class Match {
         this.updateInterval = 2;
     }
 
+    /**
+     * Function to start the match game loop.
+     * 
+     * Sets the its running variable to true and starts the loop.
+     * 
+     */
     async start() {
         this.isRunning = true;
         this.gameLoop();
     }
 
+    /**
+     * Function that handles the game loop.
+     * 
+     * Every time its called it checks if itsRunning is true.
+     * If true it calls for an update, and then calls itself again after a timeout.
+     * 
+     * @returns 
+     */
     async gameLoop() {
         if (!this.isRunning) return;
 
@@ -22,6 +36,13 @@ class Match {
         setTimeout(() => this.gameLoop(), this.updateInterval);
     }
 
+    /**
+     * Function that handles the update logic.
+     * 
+     * First updates the ellapsedTime.
+     * Then if the ellapsed time is bigger or equal to the target time it spawns a box
+     * and reduces the target time.
+     */
     update() {
         this.ellapsedTime += this.updateInterval / 1000; 
 
@@ -36,6 +57,12 @@ class Match {
         }
     }
 
+    /**
+     * Function to set isRunning to false.
+     * 
+     * It sets the isRunning variable to false.
+     * 
+     */
     stop() {
         this.isRunning = false;
     }
