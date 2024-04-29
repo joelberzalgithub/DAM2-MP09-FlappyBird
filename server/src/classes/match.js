@@ -5,7 +5,7 @@ class Match {
         this.id = id;
         this.room = room;
         this.ellapsedTime = 0;
-        this.targetTime = 1;
+        this.targetTime = 2;
         this.isRunning = false;
         this.updateInterval = 2;
     }
