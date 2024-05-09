@@ -1,3 +1,4 @@
+import 'package:flappy_ember/player.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -88,6 +89,7 @@ class LayoutRankingState extends State<LayoutRanking> {
                           onPressed: () async {
                             appData.playerMap = {};
                             appData.disconnectFromServer();
+                            appData.playerMap = <String, Player>{};
                           },
                           child: const Text("Tornar a la pantalla d'inici"),
                         ),
