@@ -28,6 +28,8 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
 
   @override
   Future<void> onLoad() async {
+    _time = 0;
+    _gameOver = false;
 
     await addAll([
       Sky(),
@@ -35,6 +37,7 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
       player =  appData.playerMap[appData.id]?? Player('xd', false, 'bird_orange.png'),
       ScreenHitbox(),
     ]);
+    player.isDying = false;
 
     appData.playerMap.forEach((key, value) {if (!value.local) {
       add(value);
@@ -54,14 +57,27 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
     }
     */
 
-    bool? isBottom = appData.isNewBoxBottom;
-    int? boxHeight = appData.newBoxHeight;
+    final isBottom = appData.isNewBoxBottom;
+    final boxHeight = appData.newBoxHeight;
 
     if (isBottom != null && boxHeight != null) {
       add(BoxStack(isBottom: isBottom, stackHeight: boxHeight));
       appData.isNewBoxBottom = null;
       appData.newBoxHeight = null;
       appData.forceNotifyListeners();
+    }
+
+    if (appData.isGameOver) {
+      pauseEngine();
+      appData.changeConnectionStatus(ConnectionStatus.disconnecting);
+      appData.sendCustomMessage({
+        'type': 'alive',
+        'id': appData.id,
+        'x': player.x,
+        'y': player.y,
+        'score': player.score,
+      });
+      return;
     }
 
     if (!_gameOver) {
@@ -72,6 +88,9 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
         'y': player.y,
         'score': player.score,
       });
+
+    } else {
+      gameOver();
     }
 
     appData.sortPlayerMap();
@@ -86,7 +105,7 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
   }
 
   void countTime() {
-    if (player.isDying) {
+    if (player.isDying || _gameOver || appData.isGameOver) {
       appData.setScore(appData.id, _time);
       return;
     }
@@ -101,6 +120,7 @@ class FlappyEmber extends FlameGame with TapDetector, HasCollisionDetection {
     _gameOver = true;
     appData.sendMessage('dead', 'x', player.x, 'y', player.y);
     appData.changeConnectionStatus(ConnectionStatus.disconnecting);
+    appData.playerMap = <String, Player>{};
   }
 
   @override

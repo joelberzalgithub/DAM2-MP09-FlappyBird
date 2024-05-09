@@ -47,6 +47,7 @@ class MyAppState extends State<MyApp> {
   Widget _setLayout(BuildContext context) {
     final appData = Provider.of<AppData>(context);
 
+
     switch (appData.connectionStatus) {
       case ConnectionStatus.connecting:
         return const LayoutLogin();

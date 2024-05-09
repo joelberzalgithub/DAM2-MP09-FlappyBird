@@ -68,7 +68,7 @@ class LayoutRankingState extends State<LayoutRanking> {
                                       child: SizedBox(
                                         height: 10,
                                         child: LinearProgressIndicator(
-                                          value: appData.playerMap[playerId]!.score / appData.getHighScore(),
+                                          value: appData.playerMap[playerId]!.score / (appData.getHighScore() == 0 ? 1 : appData.getHighScore()),
                                           backgroundColor: Colors.transparent,
                                           color: Colors.blue,
                                         ),

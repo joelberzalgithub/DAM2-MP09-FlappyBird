@@ -13,16 +13,15 @@ class Room {
 
     /**
      * Function to add a new player to the room.
-     * 
-     * First checks if the room is joinable by asserting that the timer is null and the 
+     *
+     * First checks if the room is joinable by asserting that the timer is null and the
      * player count is less than 4.
-     * If the room is joinable, the player is added. 
+     * If the room is joinable, the player is added.
      * Then all the players in the room are notified of the new player.
      * If the player count is 3 before adding the player the match starts.
-     * 
-     * @param {
-     * } player 
-     * @returns 
+     *
+     * @returns
+     * @param player
      */
     addPlayer(player) {
         const playerCount = this.players.length;
@@ -53,7 +52,7 @@ class Room {
         player.socket.send(pMessage);
         logger.info(`${player.id} joined room ${this.id}`);
 
-        if (playerCount >= 3) {
+        if (playerCount >= 1) {
             logger.info(`4 players joined room ${this.id}, match starting...`);
             this.startMatch();
         }
@@ -75,8 +74,9 @@ class Room {
      * @returns 
      */
     getPlayer(playerId) {
-        const player = this.players.find((player) => {return player.id === playerId});
-        return player;
+        return this.players.find((player) => {
+            return player.id === playerId
+        });
     }
 
     /**
@@ -90,6 +90,15 @@ class Room {
     removePlayer(playerId) {
         const player = this.getPlayer(playerId);
         this.players = this.players.filter(p => p !== player);
+
+        if (this.players.length === 1) {
+            this.players[0].socket.send(JSON.stringify(
+                {
+                    type: 'victory',
+                    message: 'Game over, you won!'
+                }
+            ));
+        }
 
         if (this.players.length === 0) {
             this.match.stop();
@@ -106,7 +115,7 @@ class Room {
      * @returns 
      */
     hasPlayer(playerId) {
-        var hasPlayer = false;
+        let hasPlayer = false;
         this.players.forEach((player) => {
             if (player.id === playerId) hasPlayer = true;
         });

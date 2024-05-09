@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:web_socket_channel/io.dart';
 
+import 'game.dart';
 import 'player.dart';
 
 enum ConnectionStatus {
@@ -28,6 +29,7 @@ class AppData with ChangeNotifier {
   int alivePlayers = 0;
   bool? isNewBoxBottom;
   int? newBoxHeight;
+  bool isGameOver = false;
 
   IOWebSocketChannel? _socketClient;
   ConnectionStatus connectionStatus = ConnectionStatus.disconnected;
@@ -111,7 +113,7 @@ class AppData with ChangeNotifier {
 
           case 'move':
             playerMap[data['id']]?.position.y = (data['y']) as double;
-            playerMap[data['id']]?.score = (data['score']) as int;
+            playerMap[data['id']]?.score = ((data['score']) as num).round();
             break;
 
           case 'start':
@@ -146,6 +148,12 @@ class AppData with ChangeNotifier {
             newBoxHeight = data['height'];
             break;
 
+          case 'victory':
+            print(data);
+            isGameOver = true;
+            notifyListeners();
+            break;
+
           default:
             messages += "Message from '${data['from']}': ${data['value']}\n";
             break;
@@ -163,6 +171,10 @@ class AppData with ChangeNotifier {
         notifyListeners();
       },
     );
+  }
+
+  FlappyEmber buildGame() {
+    return FlappyEmber(this);
   }
 
   void sendMessage(

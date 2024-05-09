@@ -79,7 +79,7 @@ class Player extends SpriteAnimationComponent
         RotateEffect.by(
           9,
           EffectController(
-            duration: 2.0,
+            duration: 0.5,
           ),
         // ignore: deprecated_member_use
         )..onFinishCallback = gameRef.gameOver,

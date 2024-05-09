@@ -34,9 +34,11 @@ async function sendSalutation(socket, id) {
  * @param {*} message 
  */
 async function handleJoinMessage(socket, id, message) {
-    var player = new Player(socket, message.nickname, id);
-    var room = await rooms.find((room) => { return room.players.length < 4 && room.timer === null });
-    if (!room || room === null) {
+    let player = new Player(socket, message.nickname, id);
+    let room = await rooms.find((room) => {
+        return room.players.length < 4 && room.timer === null
+    });
+    if (!room) {
         logger.info(`No valid room found, creating one with id ${id}`);
         room = new Room(id);
         rooms.push(room);
@@ -60,7 +62,7 @@ async function handleAliveMessage(message, playerId) {
         return room.hasPlayer(playerId);
     });
 
-    if (!room || room === null) {
+    if (!room) {
         logger.error(`Received alive message from ${playerId}, but couldn't find the target room`);
         return;
     }
@@ -93,7 +95,7 @@ async function handleDeadMessage(message, playerId) {
         return room.hasPlayer(playerId);
     });
 
-    if (!room || room === null) {
+    if (!room) {
         logger.error(`Received dead message from ${playerId}, but couldn't find the target room`);
         return;
     }
@@ -109,7 +111,6 @@ async function handleDeadMessage(message, playerId) {
         logger.warn(`The room ${room.id} is empty, clearing it...`);
         rooms = rooms.filter(r => r.id !== room.id);
     }
-    
 }
 
 module.exports = {

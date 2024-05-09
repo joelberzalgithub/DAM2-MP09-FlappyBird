@@ -81,6 +81,7 @@ class LayoutLoginState extends State<LayoutLogin> {
                               portController.text != '' &&
                               nameController.text != '') {
                             appData.name = nameController.text;
+                            appData.isGameOver = false;
                             appData.connectToServer();
                           }
                         },

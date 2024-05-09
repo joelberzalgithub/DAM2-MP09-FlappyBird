@@ -26,9 +26,9 @@ ws.on('connection', (socket) => {
     socket.on('message', async (message) => {
         const messageData = JSON.parse(message);
 
-        if (messageData.type === 'join') messages.handleJoinMessage(socket, playerId, messageData);
-        if (messageData.type === 'alive') messages.handleAliveMessage(messageData, playerId);
-        if (messageData.type === 'dead') messages.handleDeadMessage(messageData, playerId);
+        if (messageData.type === 'join') await messages.handleJoinMessage(socket, playerId, messageData);
+        if (messageData.type === 'alive') await messages.handleAliveMessage(messageData, playerId);
+        if (messageData.type === 'dead') await messages.handleDeadMessage(messageData, playerId);
     });
 });
 
